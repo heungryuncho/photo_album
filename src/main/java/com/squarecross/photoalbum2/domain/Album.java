@@ -12,12 +12,12 @@ public class Album {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "album_id", unique = true, nullable = false)
-    private long albumId;
+    private Long albumId;
 
-    @Column(name = "album_name", unique = false, nullable = false)
+    @Column(name = "album_name", unique = false, nullable = true)
     private String albumName;
 
-    @Column(name = "created_at", unique = false, nullable = true)
+    @Column(name = "album_created_at", unique = false, nullable = true)
     @CreationTimestamp // DB에 입력될 때 자동으로 현재시간 입력
     private Date createdAt;
 

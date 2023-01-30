@@ -1,25 +1,51 @@
 package com.squarecross.photoalbum2.controller;
 
 import com.squarecross.photoalbum2.dto.AlbumDto;
+import com.squarecross.photoalbum2.repository.AlbumRepository;
 import com.squarecross.photoalbum2.service.AlbumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/albums")
 public class AlbumController {
 
     @Autowired
-    AlbumService albumService;
+    private AlbumService albumService;
+    @Autowired
+    private AlbumRepository albumRepository;
 
-    @RequestMapping(value = "/{albumId}", method = RequestMethod.GET)
-    public ResponseEntity<AlbumDto> getAlbum(@PathVariable("albumId") final long albumId) {
+
+    @GetMapping("/{albumId}")
+    public ResponseEntity<AlbumDto> getAlbum(@PathVariable("albumId")final Long albumId){
         AlbumDto album = albumService.getAlbum(albumId);
         return new ResponseEntity<>(album, HttpStatus.OK);
     }
+
+    @GetMapping("/query")
+    public String getAlbumByQuery(
+            @RequestParam(value = "albumId") Long albumId){
+        AlbumDto album = albumService.getAlbum((albumId));
+        return "albumId: " + albumId  ;
+    }
+
+
+    // 이거 맞나 질문하기
+    @PostMapping("/json_body")
+    public int getAlbumByJSON(@RequestBody Map<String, Integer> body) {
+        int album = body.get("albumId");
+        return album;
+    }
+
+    @PostMapping("")
+    public ResponseEntity<AlbumDto> createAlbum(@RequestBody final AlbumDto albumDto) throws IOException {
+        AlbumDto savedAlbumDto = albumService.createAlbum(albumDto);
+        return new ResponseEntity<>(savedAlbumDto, HttpStatus.OK);
+    }
+
 }

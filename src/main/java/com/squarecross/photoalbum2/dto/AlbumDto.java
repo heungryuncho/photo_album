@@ -2,6 +2,7 @@ package com.squarecross.photoalbum2.dto;
 
 import java.util.Date;
 
+
 public class AlbumDto {
     Long albumId;
     String albumName;
@@ -30,10 +31,6 @@ public class AlbumDto {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public int getCount() {
-        return count;
     }
 
     public void setCount(int count) {
