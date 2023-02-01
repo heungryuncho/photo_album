@@ -6,14 +6,20 @@ import com.squarecross.photoalbum2.dto.AlbumDto;
 import com.squarecross.photoalbum2.mapper.AlbumMapper;
 import com.squarecross.photoalbum2.repository.AlbumRepository;
 import com.squarecross.photoalbum2.repository.PhotoRepository;
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 
-import javax.persistence.EntityNotFoundException;
-import java.util.Optional;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,20 +46,20 @@ class AlbumServiceTest {
     }
 
     @Test
-    void albumIdNotFind(){
-      try {
-          Album album = new Album();
-          album.setAlbumId(-1L);
-          Album savedAlbum = albumRepository.save(album);
-          fail("An Exception was Expected");
-      } catch(Exception e){
-          assertEquals(1, e.getMessage());
-      }
+    void albumIdNotFind() {
+        try {
+            Album album = new Album();
+            album.setAlbumId(-1L);
+            Album savedAlbum = albumRepository.save(album);
+            fail("An Exception was Expected");
+        } catch (Exception e) {
+            assertEquals(1, e.getMessage());
+        }
 
     }
 
     @Test
-    void testPhotoCount(){
+    void testPhotoCount() {
         Album album = new Album();
         album.setAlbumName("테스트");
         Album savedAlbum = albumRepository.save(album);
@@ -82,5 +88,48 @@ class AlbumServiceTest {
     }
 
 
+    @Test
+    void testAlbumCreate() throws IOException {
+        AlbumDto album = new AlbumDto();
+        album.setAlbumName("테스트 앨범");
 
+        AlbumDto createdAlbum = albumService.createAlbum(album);
+
+        assertEquals(album.getAlbumName(), createdAlbum.getAlbumName());
+
+    }
+
+    @Test
+    void makingFolderDelete() throws IOException {
+        Path folderPath = Paths.get("테스트 폴더");
+        Files.createDirectory(folderPath);
+
+        Files.delete(folderPath);
+
+        assertFalse(Files.exists(folderPath));
+    }
+
+    @Test
+    void testAlbumRepository() throws InterruptedException {
+        Album album1 = new Album();
+        Album album2 = new Album();
+        album1.setAlbumName("aaaa");
+        album2.setAlbumName("aaab");
+
+        albumRepository.save(album1);
+        TimeUnit.SECONDS.sleep(1); //시간차를 벌리기위해 두번째 앨범 생성 1초 딜레이
+        albumRepository.save(album2);
+
+        //최신순 정렬, 두번째로 생성한 앨범이 먼저 나와야합니다
+        List<Album> resDate = albumRepository.findByAlbumNameContainingOrderByCreatedAtDesc("aaa");
+        assertEquals("aaab", resDate.get(0).getAlbumName()); // 0번째 Index가 두번째 앨범명 aaab 인지 체크
+        assertEquals("aaaa", resDate.get(1).getAlbumName()); // 1번째 Index가 첫번째 앨범명 aaaa 인지 체크
+        assertEquals(2, resDate.size()); // aaa 이름을 가진 다른 앨범이 없다는 가정하에, 검색 키워드에 해당하는 앨범 필터링 체크
+
+        //앨범명 정렬, aaaa -> aaab 기준으로 나와야합니다
+        List<Album> resName = albumRepository.findByAlbumNameContainingOrderByAlbumNameAsc("aaa");
+        assertEquals("aaaa", resName.get(0).getAlbumName()); // 0번째 Index가 두번째 앨범명 aaaa 인지 체크
+        assertEquals("aaab", resName.get(1).getAlbumName()); // 1번째 Index가 두번째 앨범명 aaab 인지 체크
+        assertEquals(2, resDate.size()); // aaa 이름을 가진 다른 앨범이 없다는 가정하에, 검색 키워드에 해당하는 앨범 필터링 체크
+    }
 }

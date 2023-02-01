@@ -2,6 +2,7 @@ package com.squarecross.photoalbum2.service;
 
 import com.squarecross.photoalbum2.Constants;
 import com.squarecross.photoalbum2.domain.Album;
+import com.squarecross.photoalbum2.domain.Photo;
 import com.squarecross.photoalbum2.dto.AlbumDto;
 import com.squarecross.photoalbum2.mapper.AlbumMapper;
 import com.squarecross.photoalbum2.repository.AlbumRepository;
@@ -14,17 +15,22 @@ import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AlbumService {
-    @Autowired private AlbumRepository albumRepository;
-    @Autowired private PhotoRepository photoRepository;
+    @Autowired
+    private AlbumRepository albumRepository;
+    @Autowired
+    private PhotoRepository photoRepository;
 
-    public AlbumDto getAlbum(long albumId){
+    public AlbumDto getAlbum(long albumId) {
 
         Optional<Album> res = albumRepository.findById(albumId);
-        if(res.isPresent()){
+        if (res.isPresent()) {
             AlbumDto albumDto = AlbumMapper.convertToDto(res.get());
             albumDto.setCount(photoRepository.countByAlbum_AlbumId(albumId));
             return albumDto;
@@ -33,9 +39,9 @@ public class AlbumService {
         }
     }
 
-    public AlbumDto getAlbumName(String albumName){
+    public AlbumDto getAlbumName(String albumName) {
         Optional<Album> res2 = albumRepository.findByAlbumName(albumName);
-        if(res2.isPresent()){
+        if (res2.isPresent()) {
             AlbumDto albumDto = AlbumMapper.convertToDto(res2.get());
             return albumDto;
         } else {
@@ -56,5 +62,23 @@ public class AlbumService {
         Files.createDirectories(Paths.get(Constants.PATH_PREFIX + "/photos/thumb/" + album.getAlbumId()));
     }
 
+    public List<AlbumDto> getAlbumList(String keyword, String sort) {
+        List<Album> albums;
+        if (Objects.equals(sort, "byName")) {
+            albums = albumRepository.findByAlbumNameContainingOrderByAlbumNameAsc(keyword);
+        } else if (Objects.equals(sort, "byDate")) {
+            albums = albumRepository.findByAlbumNameContainingOrderByCreatedAtDesc(keyword);
+        } else {
+            throw new IllegalArgumentException("알 수 없는 정렬 기준입니다");
+        }
+        List<AlbumDto> albumDtos = AlbumMapper.convertToDtoList(albums);
+
+        for (AlbumDto albumDto : albumDtos) {
+            List<Photo> top4 = photoRepository.findTop4ByAlbum_AlbumIdOrderByUploadedAtDesc(albumDto.getAlbumId());
+            albumDto.setThumbUrls(top4.stream().map(Photo::getThumbUrl).map(c -> Constants.PATH_PREFIX + c).collect(Collectors.toList()));
+        }
+        return albumDtos;
+
+    }
 
 }

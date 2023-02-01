@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -35,11 +36,12 @@ public class AlbumController {
     }
 
 
-    // 이거 맞나 질문하기
-    @PostMapping("/json_body")
-    public int getAlbumByJSON(@RequestBody Map<String, Integer> body) {
-        int album = body.get("albumId");
-        return album;
+   @PostMapping("/json_body")
+    public ResponseEntity<AlbumDto> getAlbumByJSON(@RequestBody Map<String, Integer> jsonbody) {
+        Integer albumId = jsonbody.get("albumId");
+        AlbumDto album = albumService.getAlbum(albumId);
+
+        return new ResponseEntity<>(album, HttpStatus.OK);
     }
 
     @PostMapping("")
@@ -48,4 +50,13 @@ public class AlbumController {
         return new ResponseEntity<>(savedAlbumDto, HttpStatus.OK);
     }
 
+    @GetMapping("")
+    public ResponseEntity<List<AlbumDto>> getAlbumList(
+            @RequestParam(value="keyword", required=false, defaultValue="") final String keyword,
+            @RequestParam(value="sort", required=false, defaultValue = "byDate") final String sort) {
+        List<AlbumDto> albumDtos = albumService.getAlbumList(keyword, sort);
+        return new ResponseEntity<>(albumDtos, HttpStatus.OK);
+    }
+
+    // required=false는 필수값은 아니라는 의미
 }
