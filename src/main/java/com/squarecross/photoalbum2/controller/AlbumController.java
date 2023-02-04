@@ -18,8 +18,6 @@ public class AlbumController {
 
     @Autowired
     private AlbumService albumService;
-    @Autowired
-    private AlbumRepository albumRepository;
 
 
     @GetMapping("/{albumId}")
@@ -37,8 +35,8 @@ public class AlbumController {
 
 
    @PostMapping("/json_body")
-    public ResponseEntity<AlbumDto> getAlbumByJSON(@RequestBody Map<String, Integer> jsonbody) {
-        Integer albumId = jsonbody.get("albumId");
+    public ResponseEntity<AlbumDto> getAlbumByJSON(@RequestBody Map<String, Long> jsonbody) {
+        Long albumId = jsonbody.get("albumId");
         AlbumDto album = albumService.getAlbum(albumId);
 
         return new ResponseEntity<>(album, HttpStatus.OK);
@@ -59,4 +57,16 @@ public class AlbumController {
     }
 
     // required=false는 필수값은 아니라는 의미
+
+    @PutMapping("/{albumId}")
+    public ResponseEntity<AlbumDto> updateAlbum(@PathVariable("albumId") final long albumId,
+                                                @RequestBody final AlbumDto albumDto) {
+        AlbumDto res = albumService.changeName(albumId, albumDto);
+        return new ResponseEntity<>(res, HttpStatus.OK);
+  }
+
+//    @DeleteMapping("/{albumId}")
+//    public ResponseEntity<Void> deleteAlbum(@PathVariable("albumId") final long albumId){
+//        return new ResponseEntity<>(HttpStatus.NO_CONTENT)
+//    }
 }

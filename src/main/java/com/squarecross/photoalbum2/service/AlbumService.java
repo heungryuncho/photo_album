@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,7 +28,7 @@ public class AlbumService {
     @Autowired
     private PhotoRepository photoRepository;
 
-    public AlbumDto getAlbum(long albumId) {
+    public AlbumDto getAlbum(Long albumId) {
 
         Optional<Album> res = albumRepository.findById(albumId);
         if (res.isPresent()) {
@@ -68,6 +69,10 @@ public class AlbumService {
             albums = albumRepository.findByAlbumNameContainingOrderByAlbumNameAsc(keyword);
         } else if (Objects.equals(sort, "byDate")) {
             albums = albumRepository.findByAlbumNameContainingOrderByCreatedAtDesc(keyword);
+        } else if (Objects.equals(sort, "byNameDesc")) {
+            albums = albumRepository.findByAlbumNameContainingOrderByAlbumNameDesc(keyword);
+        } else if (Objects.equals(sort, "byDateAsc")) {
+            albums = albumRepository.findByAlbumNameContainingOrderByCreatedAtAsc(keyword);
         } else {
             throw new IllegalArgumentException("알 수 없는 정렬 기준입니다");
         }
@@ -81,4 +86,30 @@ public class AlbumService {
 
     }
 
+    // 앨범명 바꾸기
+    public AlbumDto changeName(Long albumId, AlbumDto albumDto){
+        Optional<Album> album = this.albumRepository.findById(albumId);
+        if (album.isEmpty()){
+            throw new NoSuchElementException(String.format("Album ID '%d'가 존재하지 않습니다", albumId));
+        }
+
+        Album updateAlbum = album.get();
+        updateAlbum.setAlbumName(albumDto.getAlbumName());
+        Album savedAlbum = this.albumRepository.save(updateAlbum);
+        return AlbumMapper.convertToDto(savedAlbum);
+    }
+
+
+    // 앨범 삭제
+    public AlbumDto deleteAlbum(Long albumId, AlbumDto albumDto){
+        Optional<Album> album = this.albumRepository.findById(albumId);
+        if (!album.isPresent()){
+            throw new NoSuchElementException(String.format("Album ID '%d'가 존재하지 않습니다", albumId));
+        }
+
+        Album deleteAlbum = album.get();
+        deleteAlbum.setAlbumName((albumDto.getAlbumName()));
+        albumRepository.delete(deleteAlbum);
+        return albumDto;
+    }
 }
