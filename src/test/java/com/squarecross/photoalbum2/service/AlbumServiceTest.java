@@ -183,4 +183,19 @@ class AlbumServiceTest {
 //        assertEquals("Test Album", deletedAlbum.getAlbumName());
 //    }
 
+    @Test
+    public void testDeleteAlbum() {
+        Long albumId = 1L;
+        AlbumDto albumDto = new AlbumDto();
+        albumDto.setAlbumName("Test Album");
+
+        Album album = new Album();
+        album.setAlbumId(albumId);
+        album.setAlbumName(albumDto.getAlbumName());
+
+        AlbumDto result = albumService.deleteAlbum(albumId, albumDto);
+
+        assertEquals(albumDto, result);
+    }
+
 }

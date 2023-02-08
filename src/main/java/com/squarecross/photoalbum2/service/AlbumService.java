@@ -103,12 +103,9 @@ public class AlbumService {
     // 앨범 삭제
     public AlbumDto deleteAlbum(Long albumId, AlbumDto albumDto){
         Optional<Album> album = this.albumRepository.findById(albumId);
-        if (!album.isPresent()){
-            throw new NoSuchElementException(String.format("Album ID '%d'가 존재하지 않습니다", albumId));
-        }
+
 
         Album deleteAlbum = album.get();
-        deleteAlbum.setAlbumName((albumDto.getAlbumName()));
         albumRepository.delete(deleteAlbum);
         return albumDto;
     }
