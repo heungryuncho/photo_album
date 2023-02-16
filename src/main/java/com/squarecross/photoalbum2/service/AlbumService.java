@@ -7,11 +7,13 @@ import com.squarecross.photoalbum2.dto.AlbumDto;
 import com.squarecross.photoalbum2.mapper.AlbumMapper;
 import com.squarecross.photoalbum2.repository.AlbumRepository;
 import com.squarecross.photoalbum2.repository.PhotoRepository;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -20,6 +22,8 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
 
 @Service
 public class AlbumService {
@@ -63,6 +67,8 @@ public class AlbumService {
         Files.createDirectories(Paths.get(Constants.PATH_PREFIX + "/photos/thumb/" + album.getAlbumId()));
     }
 
+
+
     public List<AlbumDto> getAlbumList(String keyword, String sort) {
         List<Album> albums;
         if (Objects.equals(sort, "byName")) {
@@ -101,12 +107,18 @@ public class AlbumService {
 
 
     // 앨범 삭제
-    public AlbumDto deleteAlbum(Long albumId, AlbumDto albumDto){
-        Optional<Album> album = this.albumRepository.findById(albumId);
-
-
-        Album deleteAlbum = album.get();
-        albumRepository.delete(deleteAlbum);
-        return albumDto;
+    public void deleteAlbum(Long albumId) {
+        albumRepository.deleteById(albumId);
+        File file = new File(path);
+        if (file.isDirectory()) {
+            // 디렉토리인 경우 디렉토리와 그 내용을 모두 삭제합니다.
+            File[] files = file.listFiles();
+            for (File jpg : files) {
+                deleteAlbum(albumId);
+            }
+        }
+        // 파일이나 빈 디렉토리를 삭제합니다.
+        file.delete();
     }
+
 }

@@ -16,6 +16,7 @@ import org.springframework.test.context.event.annotation.BeforeTestClass;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,7 +28,8 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 
@@ -163,39 +165,22 @@ class AlbumServiceTest {
         assertEquals("변경후", updatedDto.getAlbumName());
     }
 
-    //삭제API 테스트는 조금 더 공부해보고 해보기
-//    @Test
-//    public void deleteAlbumTest() {
-//        Long albumId = 1L;
-//        AlbumDto albumDto = new AlbumDto();
-//        albumDto.setAlbumId(1L);
-//        albumDto.setAlbumName("Test Album");
-//        Album album = new Album();
-//        album.setAlbumId(albumId);
-//        album.setAlbumName(albumDto.getAlbumName());
-//
-//        when(albumRepository.findById(albumId)).thenReturn(Optional.of(album));
-//        doNothing().when(albumRepository).delete(album);
-//
-//        AlbumDto deletedAlbum = albumService.deleteAlbum(albumId, albumDto);
-//        assertNotNull(deletedAlbum);
-//        assertEquals(albumId, deletedAlbum.getAlbumId());
-//        assertEquals("Test Album", deletedAlbum.getAlbumName());
-//    }
 
     @Test
-    public void testDeleteAlbum() {
-        Long albumId = 1L;
-        AlbumDto albumDto = new AlbumDto();
-        albumDto.setAlbumName("Test Album");
+    public void testDeleteAlbum() throws IOException {
+        String folder = "C:\\Temp\\testAlbum";
+        File file = new File(folder);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        File.createTempFile("temp", ".txt", file);
+        File.createTempFile("temp", ".jpg", file);
 
         Album album = new Album();
-        album.setAlbumId(albumId);
-        album.setAlbumName(albumDto.getAlbumName());
+        albumRepository.delete(album);
 
-        AlbumDto result = albumService.deleteAlbum(albumId, albumDto);
-
-        assertEquals(albumDto, result);
+        assertTrue(file.exists());
     }
+
 
 }

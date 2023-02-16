@@ -22,7 +22,7 @@ public class Album {
     private Date createdAt;
 
     public Album() {}
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "album")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "album", cascade = CascadeType.ALL)
     private List<Photo> photos;
 
     public Long getAlbumId() {

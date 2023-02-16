@@ -7,6 +7,7 @@ import com.squarecross.photoalbum2.dto.PhotoDto;
 import com.squarecross.photoalbum2.mapper.PhotoMapper;
 import com.squarecross.photoalbum2.repository.AlbumRepository;
 import com.squarecross.photoalbum2.repository.PhotoRepository;
+import org.apache.commons.io.FilenameUtils;
 import org.hibernate.mapping.Constraint;
 import org.imgscalr.Scalr;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -80,20 +83,40 @@ public class PhotoService {
         return fileName;
     }
 
-    private void saveFile(MultipartFile file, Long AlbumId, String fileName) {
+    private void saveFile(MultipartFile file, Long albumId, String fileName) throws IOException {
+
         try {
-            String filePath = AlbumId + "/" + fileName;
+
+            // 파일 확장자 필터링
+            String ext = FilenameUtils.getExtension(fileName);
+            if (!Arrays.asList("jpg", "jpeg", "png", "gif").contains(ext.toLowerCase())) {
+                throw new IllegalArgumentException("Invalid file extension");
+            }
+
+            String filePath = albumId + "/" + fileName;
             Files.copy(file.getInputStream(), Paths.get(original_path + "/" + filePath));
 
             BufferedImage thumbImg = Scalr.resize(ImageIO.read(file.getInputStream()), Constants.THUMB_SIZE, Constants.THUMB_SIZE);
+
             File thumbFile = new File(thumb_path + "/" + filePath);
-            String ext = StringUtils.getFilenameExtension(fileName);
-            if (ext == null) {
+            String ext2 = StringUtils.getFilenameExtension(fileName);
+
+            if (ext2 == null) {
                 throw new IllegalArgumentException("No Extention");
             }
-            ImageIO.write(thumbImg, ext, thumbFile);
+            ImageIO.write(thumbImg, ext2, thumbFile);
+
         } catch (Exception e) {
             throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
         }
     }
+
+    public File getImageFile(Long photoId) {
+        Optional<Photo> res = photoRepository.findById(photoId);
+        if(res.isEmpty()){
+            throw new EntityNotFoundException(String.format("사진을 ID %d를 찾을 수 없습니다", photoId));
+        }
+        return new File(Constants.PATH_PREFIX + res.get().getOriginalUrl());
+    }
+
 }
