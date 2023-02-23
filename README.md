@@ -4,6 +4,8 @@
 
 ![화면 캡처 2023-02-23 194737](https://user-images.githubusercontent.com/74303992/220887075-80ae60ba-345f-4a38-b67d-9a133df1e59c.jpg)
 
+https://mulberry-willow-962.notion.site/API-5526bd2805394edf87b5b71a9c896d7c
+
 언어	Java 11  
 프레임워크	Spring 2.7.8 (Gradle)  
 IDE	IntelliJ  
