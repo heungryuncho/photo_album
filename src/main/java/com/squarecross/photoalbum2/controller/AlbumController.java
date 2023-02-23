@@ -27,8 +27,7 @@ public class AlbumController {
     }
 
     @GetMapping("/query")
-    public String getAlbumByQuery(
-            @RequestParam(value = "albumId") Long albumId){
+    public String getAlbumByQuery(@RequestParam(value = "albumId") Long albumId){
         AlbumDto album = albumService.getAlbum((albumId));
         return "albumId: " + albumId  ;
     }
