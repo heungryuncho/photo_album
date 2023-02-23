@@ -1,6 +1,6 @@
 # photo_album
 
-![photoAlbumERDjpeg](https://user-images.githubusercontent.com/74303992/220883554-b25ba35a-2b35-4fba-8fe4-6bf3b3b785ff.jpeg)
+![photoAlbumERDjpeg](https://user-images.githubusercontent.com/74303992/220884695-ffc0523c-09a2-417c-b56d-dd821d32f5ee.jpeg)
 
 언어	Java 11  
 프레임워크	Spring 2.7.8 (Gradle)  
