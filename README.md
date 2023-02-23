@@ -1,4 +1,10 @@
 # photo_album
+
+<p align="center">
+  <img src="![photoAlbumERDjpeg](https://user-images.githubusercontent.com/74303992/220883554-b25ba35a-2b35-4fba-8fe4-6bf3b3b785ff.jpeg)
+">
+</p>
+
 언어	Java 11  
 프레임워크	Spring 2.7.8 (Gradle)  
 IDE	IntelliJ  
