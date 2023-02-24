@@ -17,7 +17,6 @@ public class AlbumMapper {
 
     public static Album convertToModel(AlbumDto albumDto) {
         Album album = new Album();
-
         album.setAlbumId(albumDto.getAlbumId());
         album.setAlbumName(albumDto.getAlbumName());
         album.setCreatedAt(albumDto.getCreatedAt());
