@@ -16,28 +16,24 @@ import java.util.Map;
 @RequestMapping("/albums")
 public class AlbumController {
 
-    @Autowired
-    private AlbumService albumService;
+    @Autowired AlbumService albumService;
 
 
     @GetMapping("/{albumId}")
-    public ResponseEntity<AlbumDto> getAlbum(@PathVariable("albumId")final Long albumId){
+    public ResponseEntity<AlbumDto> getAlbum(@PathVariable("albumId") final long albumId) {
         AlbumDto album = albumService.getAlbum(albumId);
         return new ResponseEntity<>(album, HttpStatus.OK);
     }
 
     @GetMapping("/query")
     public String getAlbumByQuery(@RequestParam(value = "albumId") Long albumId){
-        AlbumDto album = albumService.getAlbum((albumId));
         return "albumId: " + albumId  ;
     }
-
 
    @PostMapping("/json_body")
     public ResponseEntity<AlbumDto> getAlbumByJSON(@RequestBody Map<String, Long> jsonbody) {
         Long albumId = jsonbody.get("albumId");
         AlbumDto album = albumService.getAlbum(albumId);
-
         return new ResponseEntity<>(album, HttpStatus.OK);
     }
 
