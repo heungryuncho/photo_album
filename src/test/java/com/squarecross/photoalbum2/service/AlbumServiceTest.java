@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -32,16 +33,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-
+@Transactional
 class AlbumServiceTest {
 
-    @Autowired
-    AlbumRepository albumRepository;
-    @Autowired
-    AlbumService albumService;
-    @Autowired
-    PhotoRepository photoRepository;
-
+    @Autowired AlbumRepository albumRepository;
+    @Autowired AlbumService albumService;
+    @Autowired PhotoRepository photoRepository;
 
     @Test
     void getAlbum() {
@@ -54,17 +51,33 @@ class AlbumServiceTest {
     }
 
     @Test
-    void albumIdNotFind() {
-        try {
-            Album album = new Album();
-            album.setAlbumId(-1L);
-            Album savedAlbum = albumRepository.save(album);
-            fail("An Exception was Expected");
-        } catch (Exception e) {
-            assertEquals(1, e.getMessage());
-        }
+    void getAlbumName() {
+        String albumName = "테스트 앨범";
+        Album album = new Album();
+        album.setAlbumName(albumName);
+        Album savedAlbumName = albumRepository.save(album);
 
+        AlbumDto resAlbumName = albumService.getAlbumName(savedAlbumName.getAlbumName());
+        assertEquals("테스트 앨범", resAlbumName.getAlbumName());
     }
+
+    @Test
+    void getAlbumException() {
+        Long albumId = 1234L;
+        Album album = new Album();
+        album.setAlbumName("예외 테스트");
+        album.setAlbumId(albumId);
+        albumRepository.save(album);
+
+        Optional<Album> optionalAlbum = albumRepository.findById(albumId);
+
+        try {
+            optionalAlbum.orElseThrow(NoSuchElementException::new);
+            fail("Expected NoSuchElementException was not thrown.");
+        } catch (NoSuchElementException e) {
+        }
+    }
+
 
     @Test
     void testPhotoCount() {
@@ -181,6 +194,7 @@ class AlbumServiceTest {
 
         assertTrue(file.exists());
     }
+
 
 
 }

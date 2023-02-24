@@ -27,13 +27,12 @@ import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
 
 @Service
 public class AlbumService {
-    @Autowired
-    private AlbumRepository albumRepository;
-    @Autowired
-    private PhotoRepository photoRepository;
 
+    @Autowired private AlbumRepository albumRepository;
+    @Autowired private PhotoRepository photoRepository;
+
+    // Album 정보 조회
     public AlbumDto getAlbum(Long albumId) {
-
         Optional<Album> res = albumRepository.findById(albumId);
         if (res.isPresent()) {
             AlbumDto albumDto = AlbumMapper.convertToDto(res.get());
@@ -44,6 +43,7 @@ public class AlbumService {
         }
     }
 
+    // Album  이름으로 조회
     public AlbumDto getAlbumName(String albumName) {
         Optional<Album> res2 = albumRepository.findByAlbumName(albumName);
         if (res2.isPresent()) {
