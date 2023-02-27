@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface PhotoRepository extends JpaRepository<Photo, Long> {
     int countByAlbum_AlbumId(Long AlbumId);
 
-    List<Photo> findTop4ByAlbum_AlbumIdOrderByUploadedAtDesc(Long AlbumId);
+    List<Photo> findTop4ByAlbum_AlbumIdOrderByUploadedAtDesc(Long AlbumId); // 최신 4장 이미지를 가져옴
 
     Optional<Photo> findByFileNameAndAlbum_AlbumId(String photoName, Long albumId);
 }

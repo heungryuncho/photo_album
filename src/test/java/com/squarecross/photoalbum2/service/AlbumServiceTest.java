@@ -3,16 +3,10 @@ package com.squarecross.photoalbum2.service;
 import com.squarecross.photoalbum2.domain.Album;
 import com.squarecross.photoalbum2.domain.Photo;
 import com.squarecross.photoalbum2.dto.AlbumDto;
-import com.squarecross.photoalbum2.mapper.AlbumMapper;
 import com.squarecross.photoalbum2.repository.AlbumRepository;
 import com.squarecross.photoalbum2.repository.PhotoRepository;
-import org.aspectj.lang.annotation.Before;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Nested;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.event.annotation.AfterTestClass;
-import org.springframework.test.context.event.annotation.BeforeTestClass;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -133,7 +127,6 @@ class AlbumServiceTest {
 
 
     @Test
-    @Transactional
     void testAlbumRepository() throws InterruptedException {
         Album album1 = new Album();
         Album album2 = new Album();
