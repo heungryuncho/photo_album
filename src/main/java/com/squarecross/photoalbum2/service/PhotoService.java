@@ -23,17 +23,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 @Service
 public class PhotoService {
-
-    @Autowired
-    private PhotoRepository photoRepository;
-
-    @Autowired
-    private AlbumRepository albumRepository;
+    @Autowired private PhotoRepository photoRepository;
+    @Autowired private AlbumRepository albumRepository;
 
     private final String original_path = Constants.PATH_PREFIX + "/photos/original";
     private final String thumb_path = Constants.PATH_PREFIX + "/photos/thumb";

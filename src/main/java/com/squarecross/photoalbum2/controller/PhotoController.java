@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.ArrayList;
@@ -22,8 +21,7 @@ import java.util.zip.ZipOutputStream;
 @RestController
 @RequestMapping("/albums/{albumId}/photos")
 public class PhotoController {
-    @Autowired
-    private PhotoService photoService;
+    @Autowired private PhotoService photoService;
 
     @GetMapping("/{photoId}")
     public ResponseEntity<PhotoDto> getPhotoInfo(@PathVariable("photoId") final Long photoId) {

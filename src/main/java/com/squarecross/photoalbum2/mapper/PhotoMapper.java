@@ -4,7 +4,7 @@ import com.squarecross.photoalbum2.domain.Photo;
 import com.squarecross.photoalbum2.dto.PhotoDto;
 
 public class PhotoMapper {
-    public static PhotoDto convertToDto(Photo photo) {
+    public static PhotoDto convertToDto(Photo photo){
         PhotoDto photoDto = new PhotoDto();
         photoDto.setPhotoId(photo.getPhotoId());
         photoDto.setFileName(photo.getFileName());
@@ -12,7 +12,6 @@ public class PhotoMapper {
         photoDto.setThumbUrl(photo.getThumbUrl());
         photoDto.setUploadedAt(photo.getUploadedAt());
         photoDto.setAlbumId(photoDto.getAlbumId());
-
         return photoDto;
     }
 }
