@@ -28,7 +28,7 @@ public class Album {
 
     public Album() {}
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "album", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Photo> photos;
 
 }

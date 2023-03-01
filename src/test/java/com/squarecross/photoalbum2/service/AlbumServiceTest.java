@@ -1,5 +1,6 @@
 package com.squarecross.photoalbum2.service;
 
+import com.squarecross.photoalbum2.Constants;
 import com.squarecross.photoalbum2.domain.Album;
 import com.squarecross.photoalbum2.domain.Photo;
 import com.squarecross.photoalbum2.dto.AlbumDto;
@@ -153,7 +154,6 @@ class AlbumServiceTest {
 
 
     @Test
-    @Transactional
     void testChangeAlbumName() throws IOException {
         //앨범 생성
         AlbumDto albumDto = new AlbumDto();
@@ -173,21 +173,26 @@ class AlbumServiceTest {
 
 
     @Test
-    public void testDeleteAlbum() throws IOException {
-        String folder = "C:\\Temp\\testAlbum";
-        File file = new File(folder);
-        if (!file.exists()) {
-            file.mkdirs();
+    public void testDeleteAlbum() throws Exception {
+        // given
+        Long albumId = 4L;
+
+        // when
+        albumService.deleteAlbum(albumId);
+
+        // then
+        List<Photo> deletePhotos = photoRepository.findByAlbum_AlbumId(albumId);
+
+        for(Photo photo : deletePhotos){
+            assertFalse(Files.exists(Paths.get(Constants.PATH_PREFIX+photo.getOriginalUrl())));
+            assertFalse(Files.exists(Paths.get(Constants.PATH_PREFIX+photo.getThumbUrl())));
         }
-        File.createTempFile("temp", ".txt", file);
-        File.createTempFile("temp", ".jpg", file);
 
-        Album album = new Album();
-        albumRepository.delete(album);
+        assertThat(Files.exists(Paths.get(Constants.PATH_PREFIX+"/photos/original/"+albumId)));
+        assertThat(Files.exists(Paths.get(Constants.PATH_PREFIX+"/photos/thumb/"+albumId)));
 
-        assertTrue(file.exists());
+        assertEquals(Optional.empty(), albumRepository.findById(albumId));
     }
-
 
 
 }

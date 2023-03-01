@@ -55,6 +55,7 @@ public class AlbumService {
     }
 
 
+    // 앨범 만들기
     public AlbumDto createAlbum(AlbumDto albumDto) throws IOException {
         Album album = AlbumMapper.convertToModel(albumDto);
         this.albumRepository.save(album);
@@ -110,18 +111,29 @@ public class AlbumService {
 
 
     // 앨범 삭제
-    public void deleteAlbum(Long albumId) {
-        albumRepository.deleteById(albumId);
-        File file = new File(path);
-        if (file.isDirectory()) {
-            // 디렉토리인 경우 디렉토리와 그 내용을 모두 삭제합니다.
-            File[] files = file.listFiles();
-            for (File jpg : files) {
-                deleteAlbum(albumId);
-            }
+    public void deleteAlbum(Long albumId) throws IOException {
+        Optional<Album> album = albumRepository.findById(albumId);
+        if (album.isEmpty()) {
+            throw new NoSuchElementException(String.format("Album Id '%d'가 존재하지 않습니다", albumId));
         }
-        // 파일이나 빈 디렉토리를 삭제합니다.
-        file.delete();
+        Album deleteAlbum = album.get();
+        List<Photo> deletePhotos = photoRepository.findByAlbum_AlbumId(deleteAlbum.getAlbumId());
+
+        for (Photo photo : deletePhotos) {
+            deletePhoto(photo);
+        }
+        deleteAlbumDirectories(deleteAlbum);
+
+        albumRepository.deleteById(deleteAlbum.getAlbumId());
+    }
+
+    public void deletePhoto(Photo photo) throws IOException{
+        Files.deleteIfExists(Paths.get(Constants.PATH_PREFIX+photo.getThumbUrl()));
+        Files.deleteIfExists(Paths.get(Constants.PATH_PREFIX+photo.getOriginalUrl()));
+    }
+    public void deleteAlbumDirectories(Album album) throws IOException {
+        FileUtils.cleanDirectory(new File(Constants.PATH_PREFIX + "/photos/original/" + album.getAlbumId()));
+        FileUtils.cleanDirectory(new File(Constants.PATH_PREFIX + "/photos/thumb/" + album.getAlbumId()));
     }
 
 }

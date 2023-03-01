@@ -19,6 +19,7 @@ public class AlbumController {
     @Autowired AlbumService albumService;
 
 
+    // 앨범 불러오기 (하나)
     @GetMapping("/{albumId}")
     public ResponseEntity<AlbumDto> getAlbum(@PathVariable("albumId") final long albumId) {
         AlbumDto album = albumService.getAlbum(albumId);
@@ -37,12 +38,14 @@ public class AlbumController {
         return new ResponseEntity<>(album, HttpStatus.OK);
     }
 
+    // 앨범 만들기
     @PostMapping("")
     public ResponseEntity<AlbumDto> createAlbum(@RequestBody final AlbumDto albumDto) throws IOException {
         AlbumDto savedAlbumDto = albumService.createAlbum(albumDto);
         return new ResponseEntity<>(savedAlbumDto, HttpStatus.OK);
     }
 
+    // 앨범 리스트 불러오기
     @GetMapping("")
     public ResponseEntity<List<AlbumDto>> getAlbumList(
             @RequestParam(value = "keyword", required = false, defaultValue = "") final String keyword,
@@ -52,15 +55,17 @@ public class AlbumController {
     }
     // required=false는 필수값은 아니라는 의미
 
+    // 앨범명 변경하기
     @PutMapping("/{albumId}")
     public ResponseEntity<AlbumDto> updateAlbum(@PathVariable("albumId") final long albumId,
-                                                @RequestBody final AlbumDto albumDto) {
+                                                @RequestBody final AlbumDto albumDto){
         AlbumDto res = albumService.changeName(albumId, albumDto);
         return new ResponseEntity<>(res, HttpStatus.OK);
-  }
+    }
 
+    // 앨범 삭제하기
     @DeleteMapping("/{albumId}")
-    public ResponseEntity<Void> deleteAlbum(@PathVariable("albumId") final Long albumId) {
+    public ResponseEntity<Void> deleteAlbum(@PathVariable("albumId") final Long albumId) throws IOException {
         albumService.deleteAlbum(albumId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

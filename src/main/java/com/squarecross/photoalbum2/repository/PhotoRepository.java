@@ -15,4 +15,7 @@ public interface PhotoRepository extends JpaRepository<Photo, Long> {
     List<Photo> findTop4ByAlbum_AlbumIdOrderByUploadedAtDesc(Long AlbumId); // 최신 4장 이미지를 가져옴
 
     Optional<Photo> findByFileNameAndAlbum_AlbumId(String photoName, Long albumId);
+
+    List<Photo> findByAlbum_AlbumId(Long albumId);
+
 }
