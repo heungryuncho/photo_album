@@ -23,12 +23,14 @@ import java.util.zip.ZipOutputStream;
 public class PhotoController {
     @Autowired private PhotoService photoService;
 
+    // 사진 상세정보 API
     @GetMapping("/{photoId}")
     public ResponseEntity<PhotoDto> getPhotoInfo(@PathVariable("photoId") final Long photoId) {
         PhotoDto photoDto = photoService.getPhoto(photoId);
         return new ResponseEntity<>(photoDto, HttpStatus.OK);
     }
 
+    //사진 업로드 API
     @PostMapping("")
     public ResponseEntity<List<PhotoDto>> uploadPhotos(@PathVariable("albumId") final Long albumId,
                                                        @RequestParam("photos") MultipartFile[] files) throws IOException {

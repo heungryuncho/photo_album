@@ -48,8 +48,22 @@ public class PhotoService {
         if(res.isEmpty()){
             throw new EntityNotFoundException("앨범이 존재하지 않습니다");
         }
-        String fileName = file.getOriginalFilename();
-        int fileSize = (int) file.getSize();
+        String fileName = file.getOriginalFilename(); // 파일 이름을 가져옴
+        int fileSize = (int)file.getSize(); // int는 32바이트 -> int로 나타낼 수 있는 크기는 최대 2Gb
+
+        // 확장자 확인
+        String[] allowedExtensions = {"jpg", "jpeg", "png", "gif"}; // 허용 가능한 확장자 목록
+        String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+        if (!Arrays.asList(allowedExtensions).contains(fileExtension)) {
+            throw new IllegalArgumentException("허용되지 않은 파일 확장자입니다.");
+        }
+
+        // 실제 이미지 파일인지 확인
+        BufferedImage image = ImageIO.read(file.getInputStream());
+        if (image == null) {
+            throw new IllegalArgumentException("이미지 파일이 아닙니다.");
+        }
+
         fileName = getNextFileName(fileName, albumId);
         saveFile(file, albumId, fileName);
 
@@ -64,43 +78,34 @@ public class PhotoService {
     }
 
     private String getNextFileName(String fileName, Long albumId){
-        String fileNameNoExt = StringUtils.stripFilenameExtension(fileName);
-        String ext = StringUtils.getFilenameExtension(fileName);
+        String fileNameNoExt = StringUtils.stripFilenameExtension(fileName); // 확장자 추출
+        String ext = StringUtils.getFilenameExtension(fileName); // 추출한 확장자를 제거
 
         Optional<Photo> res = photoRepository.findByFileNameAndAlbum_AlbumId(fileName, albumId);
 
         int count = 2;
-        while (res.isPresent()) {
+        while(res.isPresent()){
             fileName = String.format("%s (%d).%s", fileNameNoExt, count, ext);
             res = photoRepository.findByFileNameAndAlbum_AlbumId(fileName, albumId);
             count++;
         }
+
         return fileName;
     }
 
-    private void saveFile(MultipartFile file, Long albumId, String fileName) throws IOException {
-
+    private void saveFile(MultipartFile file, Long AlbumId, String fileName) throws IOException {
         try {
-
-            // 파일 확장자 필터링
-            String ext = FilenameUtils.getExtension(fileName);
-            if (!Arrays.asList("jpg", "jpeg", "png", "gif").contains(ext.toLowerCase())) {
-                throw new IllegalArgumentException("Invalid file extension");
-            }
-
-            String filePath = albumId + "/" + fileName;
+            String filePath = AlbumId + "/" + fileName;
             Files.copy(file.getInputStream(), Paths.get(original_path + "/" + filePath));
 
             BufferedImage thumbImg = Scalr.resize(ImageIO.read(file.getInputStream()), Constants.THUMB_SIZE, Constants.THUMB_SIZE);
 
             File thumbFile = new File(thumb_path + "/" + filePath);
-            String ext2 = StringUtils.getFilenameExtension(fileName);
-
-            if (ext2 == null) {
+            String ext = StringUtils.getFilenameExtension(fileName);
+            if (ext == null) {
                 throw new IllegalArgumentException("No Extention");
             }
-            ImageIO.write(thumbImg, ext2, thumbFile);
-
+            ImageIO.write(thumbImg, ext, thumbFile);
         } catch (Exception e) {
             throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
         }
