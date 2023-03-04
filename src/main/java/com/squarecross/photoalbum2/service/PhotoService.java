@@ -111,6 +111,7 @@ public class PhotoService {
         }
     }
 
+    // 이미지(사진) 파일 확인
     public File getImageFile(Long photoId) {
         Optional<Photo> res = photoRepository.findById(photoId);
         if(res.isEmpty()){

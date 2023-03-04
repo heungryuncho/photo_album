@@ -30,7 +30,7 @@ public class PhotoController {
         return new ResponseEntity<>(photoDto, HttpStatus.OK);
     }
 
-    //사진 업로드 API
+    // 사진 업로드 API
     @PostMapping("")
     public ResponseEntity<List<PhotoDto>> uploadPhotos(@PathVariable("albumId") final Long albumId,
                                                        @RequestParam("photos") MultipartFile[] files) throws IOException {
@@ -42,49 +42,34 @@ public class PhotoController {
         return new ResponseEntity<>(photos, HttpStatus.OK);
     }
 
+    // 사진 다운로드 API
     @GetMapping("/download")
-    public void downloadPhotos(@RequestParam("photoIds") Long[] photoIds, HttpServletResponse response){
+    public void downloadPhotos(@RequestParam("photoIds") Long[] photoIds, HttpServletResponse response) {
         try {
-            if (photoIds.length == 1){
+            if (photoIds.length == 1) {
                 File file = photoService.getImageFile(photoIds[0]);
                 OutputStream outputStream = response.getOutputStream();
                 IOUtils.copy(new FileInputStream(file), outputStream);
                 outputStream.close();
             } else {
-                // 새 임시 zip 파일 생성
-                File zipFile = File.createTempFile("photos", ".zip");
+                // 여러 사진들을 zip파일로 묶어서 다운로드
+                response.setContentType("application/zip"); // zip파일로 설정
+                response.setHeader("Content-Dispositon", "attachment: filename=\"photos.zip\"");
+                // "Content-Disposition" 헤더를 설정(컨텐츠의 성향)하여 다운로드할 파일 이름을 "photos.zip"으로 설정
+                ZipOutputStream zipOutputStream = new ZipOutputStream(response.getOutputStream());
 
-                // zip 파일에 쓸 ZipOutputStream을 생성합니다.
-                ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipFile));
-
-                // 각 사진 ID를 반복하여 zip 파일에 추가합니다.
                 for (Long photoId : photoIds) {
-                    File photoFile = photoService.getImageFile(photoId);
+                    File file = photoService.getImageFile(photoId);
+                    ZipEntry zipEntry = new ZipEntry(file.getName());
+                    zipOutputStream.putNextEntry(zipEntry);
 
-                    // zip 파일에 새 항목 만들기
-                    zipOut.putNextEntry(new ZipEntry(photoFile.getName()));
-
-                    // 사진 파일을 zip 출력 스트림에 쓰기
-                    IOUtils.copy(new FileInputStream(photoFile), zipOut);
-
-                    // 현재 항목 닫기
-                    zipOut.closeEntry();
+                    FileInputStream fileInputStream = new FileInputStream(file);
+                    IOUtils.copy(fileInputStream, zipOutputStream);
+                    fileInputStream.close();
+                    zipOutputStream.closeEntry();
                 }
-
-                // zip output stream 닫기
-                zipOut.close();
-
-                // zip 파일이 반환되고 있음을 나타내도록 응답 헤더를 설정합니다.
-                response.setContentType("application/zip");
-                response.setHeader("Content-Disposition", "attachment; filename=\"photos.zip\"");
-
-                // 응답 출력 스트림에 zip 파일 쓰기
-                OutputStream outputStream = response.getOutputStream();
-                IOUtils.copy(new FileInputStream(zipFile), outputStream);
-                outputStream.close();
-
-                // 임시 zip file을 삭제
-                zipFile.delete();
+                zipOutputStream.finish();
+                zipOutputStream.close();
             }
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Error");
