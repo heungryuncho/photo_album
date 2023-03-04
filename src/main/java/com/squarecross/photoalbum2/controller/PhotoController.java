@@ -93,15 +93,16 @@ public class PhotoController {
     // 사진 옮기기 API
     @PutMapping("/move/{albumId}")
     public ResponseEntity<PhotoDto> movePhoto(@PathVariable final Long photoId,
-                                              @PathVariable final Long albumId){
+                                              @PathVariable final Long albumId) {
         PhotoDto res = photoService.movePhoto(photoId, albumId);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     // 사진 삭제 API
-//    @DeleteMapping("/{photoId}")
-//    public ResponseEntity<Void> deleteAlbum(@PathVariable("photoId") final Long photoId) throws IOException {
-//        albumService.deleteAlbum(albumId);
-//        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @DeleteMapping("/{photoId}")
+    public ResponseEntity<Void> deletePhoto(@PathVariable final Long photoId) throws IOException {
+        photoService.deletePhoto(photoId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
+    }
 }

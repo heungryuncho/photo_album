@@ -168,4 +168,18 @@ public class PhotoService {
         return PhotoMapper.convertToDto(savedPhoto);
     }
 
+    // 사진 삭제
+    public void deletePhoto(Long photoId) throws IOException {
+        Optional<Photo> photo = photoRepository.findById(photoId);
+        if (photo.isEmpty()) {
+            throw new NoSuchElementException(String.format("사진 Id '%d'가 존재하지 않습니다", photoId));
+        }
+        Photo deletePhoto = photo.get();
+        Files.deleteIfExists(Paths.get(Constants.PATH_PREFIX + deletePhoto.getThumbUrl()));
+        Files.deleteIfExists(Paths.get(Constants.PATH_PREFIX + deletePhoto.getOriginalUrl()));
+        // 사진과 연관된 썸네일 파일과 원본 파일을 삭제
+
+        photoRepository.deleteById(deletePhoto.getPhotoId());
+
+    }
 }
