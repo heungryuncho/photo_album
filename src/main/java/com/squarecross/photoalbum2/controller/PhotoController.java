@@ -22,7 +22,8 @@ import java.util.zip.ZipOutputStream;
 @RestController
 @RequestMapping("/albums/{albumId}/photos")
 public class PhotoController {
-    @Autowired private PhotoService photoService;
+    @Autowired
+    private PhotoService photoService;
 
     // 사진 상세정보 API
     @GetMapping("/{photoId}")
@@ -90,7 +91,17 @@ public class PhotoController {
 
 
     // 사진 옮기기 API
+    @PutMapping("/move/{albumId}")
+    public ResponseEntity<PhotoDto> movePhoto(@PathVariable final Long photoId,
+                                              @PathVariable final Long albumId){
+        PhotoDto res = photoService.movePhoto(photoId, albumId);
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
 
     // 사진 삭제 API
+//    @DeleteMapping("/{photoId}")
+//    public ResponseEntity<Void> deleteAlbum(@PathVariable("photoId") final Long photoId) throws IOException {
+//        albumService.deleteAlbum(albumId);
+//        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
 }

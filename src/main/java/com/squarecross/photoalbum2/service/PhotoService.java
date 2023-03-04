@@ -24,10 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -151,6 +148,24 @@ public class PhotoService {
         }
         return photoDtos;
 
+    }
+
+    // 사진 옮기기
+    public PhotoDto movePhoto(Long photoId, Long albumId){
+        Optional<Photo> photo = this.photoRepository.findById(photoId);
+        if (photo.isEmpty()){
+            throw new NoSuchElementException(String.format("Photo ID '%d'가 존재하지 않습니다", photoId));
+        }
+
+        Optional<Album> album = this.albumRepository.findById(albumId);
+        if (album.isEmpty()){
+            throw new NoSuchElementException(String.format("Album ID '%d'가 존재하지 않습니다", albumId));
+        }
+
+        Photo updatePhoto = photo.get();
+        updatePhoto.setAlbum(album.get());
+        Photo savedPhoto = this.photoRepository.save(updatePhoto);
+        return PhotoMapper.convertToDto(savedPhoto);
     }
 
 }
