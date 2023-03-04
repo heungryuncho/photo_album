@@ -3,7 +3,9 @@ package com.squarecross.photoalbum2.service;
 import com.squarecross.photoalbum2.Constants;
 import com.squarecross.photoalbum2.domain.Album;
 import com.squarecross.photoalbum2.domain.Photo;
+import com.squarecross.photoalbum2.dto.AlbumDto;
 import com.squarecross.photoalbum2.dto.PhotoDto;
+import com.squarecross.photoalbum2.mapper.AlbumMapper;
 import com.squarecross.photoalbum2.mapper.PhotoMapper;
 import com.squarecross.photoalbum2.repository.AlbumRepository;
 import com.squarecross.photoalbum2.repository.PhotoRepository;
@@ -23,7 +25,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PhotoService {
@@ -118,6 +123,34 @@ public class PhotoService {
             throw new EntityNotFoundException(String.format("사진을 ID %d를 찾을 수 없습니다", photoId));
         }
         return new File(Constants.PATH_PREFIX + res.get().getOriginalUrl());
+    }
+
+    // 사진 목록 불러오기
+    public List<PhotoDto> getPhotoList(String keyword, String sort) {
+        List<Photo> photos;
+        if (Objects.equals(sort, "byName")){
+            photos = photoRepository.findByPhotoNameContainingOrderByAlbumNameAsc(keyword);
+        } else if (Objects.equals(sort, "byDate")) {
+            photos = photoRepository.findByPhotoNameContainingOrderByCreatedAtDesc(keyword);
+        } else if (Objects.equals(sort, "byNameDesc")) {
+            photos = photoRepository.findByPhotoNameContainingOrderByAlbumNameDesc(keyword);
+        } else if (Objects.equals(sort, "byDateAsc")) {
+            photos = photoRepository.findByPhotoNameContainingOrderByCreatedAtAsc(keyword);
+        } else {
+            throw new IllegalArgumentException("알 수 없는 정렬 기준입니다");
+        }
+
+        List<PhotoDto> photoDtos = PhotoMapper.convertToDtoList(photos);
+
+        for (PhotoDto photoDto : photoDtos) {
+            List<Photo> top4 = photoRepository.findTop4ByAlbum_AlbumIdOrderByUploadedAtDesc(photoDto.getPhotoId());
+            photoDto.setThumbUrls(top4.stream()
+                    .map(Photo::getThumbUrl)
+                    .map(c -> Constants.PATH_PREFIX + c)
+                    .collect(Collectors.toList()));
+        }
+        return photoDtos;
+
     }
 
 }

@@ -1,6 +1,7 @@
 package com.squarecross.photoalbum2.controller;
 
 
+import com.squarecross.photoalbum2.dto.AlbumDto;
 import com.squarecross.photoalbum2.dto.PhotoDto;
 import com.squarecross.photoalbum2.service.PhotoService;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
@@ -77,4 +78,19 @@ public class PhotoController {
             throw new RuntimeException(e);
         }
     }
+
+    // 사진 목록 불러오기 API
+    @GetMapping("")
+    public ResponseEntity<List<PhotoDto>> getPhotoList(
+            @RequestParam(value = "keyword", required = false, defaultValue = "") final String keyword,
+            @RequestParam(value = "sort", required = false, defaultValue = "byDate") final String sort) {
+        List<PhotoDto> PhotoDtos = photoService.getPhotoList(keyword, sort);
+        return new ResponseEntity<>(PhotoDtos, HttpStatus.OK);
+    }
+
+
+    // 사진 옮기기 API
+
+    // 사진 삭제 API
+
 }
