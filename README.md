@@ -34,10 +34,16 @@
 
 </br>
 
-## 4. 코드
+## 4. 기능
+ - 앨범: 생성, 삭제, 이름 변경, 목록 조회, 검색
+ - 사진: 업로드, 상세정보 조회, 목록 조회, 다운로드, 삭제, 다른앨범으로 사진옮기기
+
+</br>
+
+## 5. 코드
 
 <details>
-<summary><b>4-1. Controller</b></summary>
+<summary><b>Controller</b></summary>
 <div markdown="1">
   - AlbumController (https://github.com/heungryuncho/photo_album/blob/eefcf11b55322de3fe172d9f0335d1b367d3136a/src/main/java/com/squarecross/photoalbum2/controller/AlbumController.java#L17)
   - PhotoController https://github.com/heungryuncho/photo_album/blob/70d42b68a7cdb75b199954717f39a0e353df79b2/src/main/java/com/squarecross/photoalbum2/controller/PhotoController.java#L24
@@ -45,7 +51,7 @@
 </details>
 
 <details>
-<summary><b>4-2. Domain</b></summary>
+<summary><b>Domain</b></summary>
 <div markdown="1">
   - Album https://github.com/heungryuncho/photo_album/blob/70d42b68a7cdb75b199954717f39a0e353df79b2/src/main/java/com/squarecross/photoalbum2/domain/Album.java#L15
   - Photo https://github.com/heungryuncho/photo_album/blob/70d42b68a7cdb75b199954717f39a0e353df79b2/src/main/java/com/squarecross/photoalbum2/domain/Photo.java#L14
@@ -53,7 +59,7 @@
 </details> 
   
 <details>
-<summary><b>4-3. Dto</b></summary>
+<summary><b>Dto</b></summary>
 <div markdown="1">
   - AlbumDto https://github.com/heungryuncho/photo_album/blob/70d42b68a7cdb75b199954717f39a0e353df79b2/src/main/java/com/squarecross/photoalbum2/dto/AlbumDto.java#L11
   - PhotoDto https://github.com/heungryuncho/photo_album/blob/70d42b68a7cdb75b199954717f39a0e353df79b2/src/main/java/com/squarecross/photoalbum2/dto/PhotoDto.java#L11
@@ -61,7 +67,7 @@
 </details> 
 
 <details>
-<summary><b>4-4. Mapper</b></summary>
+<summary><b>Mapper</b></summary>
 <div markdown="1">
   - AlbumMapper https://github.com/heungryuncho/photo_album/blob/70d42b68a7cdb75b199954717f39a0e353df79b2/src/main/java/com/squarecross/photoalbum2/mapper/AlbumMapper.java#L9
   - PhotoMapper https://github.com/heungryuncho/photo_album/blob/70d42b68a7cdb75b199954717f39a0e353df79b2/src/main/java/com/squarecross/photoalbum2/mapper/PhotoMapper.java#L11
@@ -69,7 +75,7 @@
 </details> 
 
 <details>
-<summary><b>4-5. Repository</b></summary>
+<summary><b>Repository</b></summary>
 <div markdown="1">
   - AlbumRepository https://github.com/heungryuncho/photo_album/blob/70d42b68a7cdb75b199954717f39a0e353df79b2/src/main/java/com/squarecross/photoalbum2/repository/AlbumRepository.java#L12
   - PhotoRepository https://github.com/heungryuncho/photo_album/blob/70d42b68a7cdb75b199954717f39a0e353df79b2/src/main/java/com/squarecross/photoalbum2/repository/PhotoRepository.java#L13
@@ -77,7 +83,7 @@
 </details> 
 
 <details>
-<summary><b>4-6. Service</b></summary>
+<summary><b>Service</b></summary>
 <div markdown="1">
   - AlbumService https://github.com/heungryuncho/photo_album/blob/70d42b68a7cdb75b199954717f39a0e353df79b2/src/main/java/com/squarecross/photoalbum2/service/AlbumService.java#L29
   - PhotoService https://github.com/heungryuncho/photo_album/blob/70d42b68a7cdb75b199954717f39a0e353df79b2/src/main/java/com/squarecross/photoalbum2/service/PhotoService.java#L31
@@ -86,12 +92,13 @@
 
 </br>
 
-## 5.트러블 슈팅
+## 6.트러블 슈팅
 > 앨범엔티티를 지우면서 연관된 사진엔티티가 남아있어서 삭제가 진행이 안되어서 CascadeType.ALL을 추가 하여서 
 
 </br>
 
-## 6. 회고 / 느낀점
+## 7. 회고 / 느낀점
 >항상 프로젝트를 만들다보면 사람인지라 빠르고 쉬운 방법만을 강구해왔었습니다. 강의를 통한 클론코딩을 똑같이 만들면서 뭔가 남는 것이 없다고 느꼈습니다.
 >감사하게도 어떤식으로 방향을 잡고 만들어야하는지 깨닫는 시간이었습니다.
+>아직 보안부분이나 성능부분에서도 공부를 해서 보완해야할 점이 남아있습니다.
   
