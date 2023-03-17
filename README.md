@@ -23,7 +23,7 @@
 </br>
 
 ## 3. ERD 설계
-![photoAlbumERDjpeg](https://user-images.githubusercontent.com/74303992/220884695-ffc0523c-09a2-417c-b56d-dd821d32f5ee.jpeg)
+![Blank diagram](https://user-images.githubusercontent.com/74303992/225893575-bb3843da-c235-4024-b40d-1ef6bba913cb.jpeg)
 
 </br>
 
