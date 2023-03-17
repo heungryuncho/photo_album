@@ -28,8 +28,14 @@
 </br>
 
 ## 3-1. 앨범 API 문서
+<details>
+<summary> API 문서 스크린샷 </summary>
+<div markdown="1">
+
 ![화면 캡처 2023-02-23 194737](https://user-images.githubusercontent.com/74303992/220887075-80ae60ba-345f-4a38-b67d-9a133df1e59c.jpg)
 
+</div>
+</details>
 자세한 API 문서확인 (https://mulberry-willow-962.notion.site/API-5526bd2805394edf87b5b71a9c896d7c) 참고
 
 </br>
